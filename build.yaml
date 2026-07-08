@@ -1,0 +1,17 @@
+---
+name: "Splash Screen"
+guid: "045bee24-5e88-4376-a9e3-0e259eceae73"
+version: "1.0.0.0"
+targetAbi: "10.11.0.0"
+framework: "net9.0"
+overview: "Custom loading screen with a progress bar for the Jellyfin web client"
+description: >
+  Adds a configurable splash/loading screen with a progress bar that displays
+  while the Jellyfin web client boots. Customize the logo, colors, message,
+  and minimum display duration from the plugin's settings page.
+category: "General"
+owner: "KingCharlesVI"
+artifacts:
+- "Jellyfin.Plugin.SplashScreen.dll"
+changelog: >
+  1.0.0.0: Initial release.

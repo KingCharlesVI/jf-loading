@@ -1,0 +1,10 @@
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\bin\Release\net9.0\Jellyfin.Plugin.SplashScreen.deps.json
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\bin\Release\net9.0\Jellyfin.Plugin.SplashScreen.dll
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\bin\Release\net9.0\Jellyfin.Plugin.SplashScreen.pdb
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\Jellyfin.Plugin.SplashScreen.csproj.AssemblyReference.cache
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\Jellyfin.Plugin.SplashScreen.GeneratedMSBuildEditorConfig.editorconfig
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\Jellyfin.Plugin.SplashScreen.csproj.CoreCompileInputs.cache
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\Jellyfin.Plugin.SplashScreen.dll
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\refint\Jellyfin.Plugin.SplashScreen.dll
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\Jellyfin.Plugin.SplashScreen.pdb
+G:\Github\jf-loading\Jellyfin.Plugin.SplashScreen\obj\Release\net9.0\ref\Jellyfin.Plugin.SplashScreen.dll

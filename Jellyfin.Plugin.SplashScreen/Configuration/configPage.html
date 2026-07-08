@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Splash Screen</title>
+</head>
+<body>
+    <div id="SplashScreenConfigPage" data-role="page" class="page type-interior pluginConfigurationPage" data-require="emby-input,emby-button,emby-checkbox,emby-select">
+        <div data-role="content">
+            <div class="content-primary">
+                <form id="SplashScreenConfigForm">
+                    <div class="verticalSection">
+                        <h2>Splash Screen</h2>
+                        <p>Show a custom loading screen with a progress bar while the Jellyfin web client boots.</p>
+                    </div>
+
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label>
+                            <input is="emby-checkbox" type="checkbox" id="Enabled" />
+                            <span>Enabled</span>
+                        </label>
+                        <div class="fieldDescription checkboxFieldDescription">Turn the splash screen on or off.</div>
+                    </div>
+
+                    <div class="selectContainer">
+                        <select is="emby-select" id="LogoMode" label="Logo source">
+                            <option value="Url">URL</option>
+                            <option value="Upload">Upload</option>
+                        </select>
+                    </div>
+
+                    <div class="inputContainer" id="LogoUrlContainer">
+                        <input is="emby-input" type="text" id="LogoUrl" label="Logo URL" />
+                        <div class="fieldDescription">Direct link to an image to display above the progress bar.</div>
+                    </div>
+
+                    <div class="inputContainer" id="LogoUploadContainer" style="display:none;">
+                        <label class="inputLabel" for="LogoFile">Upload logo</label>
+                        <input type="file" id="LogoFile" accept="image/*" />
+                        <button is="emby-button" type="button" id="UploadLogoButton" class="raised button-submit block">Upload</button>
+                        <div class="fieldDescription" id="LogoUploadStatus"></div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <input is="emby-input" type="text" id="LoadingMessage" label="Loading message" />
+                        <div class="fieldDescription">Optional text shown below the logo.</div>
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="BackgroundColor">Background color</label>
+                        <input type="color" id="BackgroundColor" />
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="TextColor">Text color</label>
+                        <input type="color" id="TextColor" />
+                    </div>
+
+                    <div class="inputContainer">
+                        <label class="inputLabel" for="ProgressBarColor">Progress bar color</label>
+                        <input type="color" id="ProgressBarColor" />
+                    </div>
+
+                    <div class="inputContainer">
+                        <input is="emby-input" type="number" id="MinimumDisplayDurationMs" label="Minimum display duration (ms)" min="0" step="100" />
+                        <div class="fieldDescription">Keeps the splash screen visible for at least this long, even if the app finishes loading sooner.</div>
+                    </div>
+
+                    <div>
+                        <button is="emby-button" type="submit" class="raised button-submit block">
+                            <span>Save</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var SplashScreenConfig = {
+            pluginUniqueId: "045bee24-5e88-4376-a9e3-0e259eceae73"
+        };
+
+        function splashScreenUpdateLogoModeVisibility(mode) {
+            document.querySelector("#LogoUrlContainer").style.display = mode === "Url" ? "" : "none";
+            document.querySelector("#LogoUploadContainer").style.display = mode === "Upload" ? "" : "none";
+        }
+
+        document.querySelector("#SplashScreenConfigPage").addEventListener("pageshow", function () {
+            Dashboard.showLoadingMsg();
+            ApiClient.getPluginConfiguration(SplashScreenConfig.pluginUniqueId).then(function (config) {
+                document.querySelector("#Enabled").checked = config.Enabled;
+                document.querySelector("#LogoMode").value = config.LogoMode;
+                document.querySelector("#LogoUrl").value = config.LogoUrl;
+                document.querySelector("#LoadingMessage").value = config.LoadingMessage;
+                document.querySelector("#BackgroundColor").value = config.BackgroundColor;
+                document.querySelector("#TextColor").value = config.TextColor;
+                document.querySelector("#ProgressBarColor").value = config.ProgressBarColor;
+                document.querySelector("#MinimumDisplayDurationMs").value = config.MinimumDisplayDurationMs;
+                splashScreenUpdateLogoModeVisibility(config.LogoMode);
+                Dashboard.hideLoadingMsg();
+            });
+        });
+
+        document.querySelector("#LogoMode").addEventListener("change", function (e) {
+            splashScreenUpdateLogoModeVisibility(e.target.value);
+        });
+
+        document.querySelector("#UploadLogoButton").addEventListener("click", function () {
+            var fileInput = document.querySelector("#LogoFile");
+            if (!fileInput.files || !fileInput.files.length) {
+                return;
+            }
+
+            var formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            Dashboard.showLoadingMsg();
+            fetch(ApiClient.getUrl("SplashScreen/Logo"), {
+                method: "POST",
+                headers: { "Authorization": ApiClient.authorizationHeader ? ApiClient.authorizationHeader() : "" },
+                body: formData
+            })
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error("Upload failed");
+                    }
+                    return response.json();
+                })
+                .then(function (result) {
+                    document.querySelector("#LogoUploadStatus").textContent = "Uploaded: " + result.fileName;
+                    Dashboard.hideLoadingMsg();
+                })
+                .catch(function () {
+                    document.querySelector("#LogoUploadStatus").textContent = "Upload failed.";
+                    Dashboard.hideLoadingMsg();
+                });
+        });
+
+        document.querySelector("#SplashScreenConfigForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            Dashboard.showLoadingMsg();
+            ApiClient.getPluginConfiguration(SplashScreenConfig.pluginUniqueId).then(function (config) {
+                config.Enabled = document.querySelector("#Enabled").checked;
+                config.LogoMode = document.querySelector("#LogoMode").value;
+                config.LogoUrl = document.querySelector("#LogoUrl").value;
+                config.LoadingMessage = document.querySelector("#LoadingMessage").value;
+                config.BackgroundColor = document.querySelector("#BackgroundColor").value;
+                config.TextColor = document.querySelector("#TextColor").value;
+                config.ProgressBarColor = document.querySelector("#ProgressBarColor").value;
+                config.MinimumDisplayDurationMs = parseInt(document.querySelector("#MinimumDisplayDurationMs").value, 10) || 0;
+
+                ApiClient.updatePluginConfiguration(SplashScreenConfig.pluginUniqueId, config).then(function (result) {
+                    Dashboard.processPluginConfigurationUpdateResult(result);
+                });
+            });
+            return false;
+        });
+    </script>
+</body>
+</html>
