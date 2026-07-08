@@ -1,0 +1,54 @@
+name: Release Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - id: build
+        uses: oddstr13/jellyfin-plugin-repository-manager@v1.1.1
+        with:
+          path: ./Jellyfin.Plugin.SplashScreen
+          output: ./artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.build.outputs.artifact }}
+
+      - name: Update manifest.json
+        env:
+          PIP_BREAK_SYSTEM_PACKAGES: '1'
+        run: |
+          python3 -m pip install jprm
+          ZIP="$(realpath "${{ steps.build.outputs.artifact }}")"
+          FILENAME=$(basename "$ZIP")
+          TAG="${GITHUB_REF_NAME}"
+          BASE_URL="https://github.com/${{ github.repository }}/releases/download/${TAG}"
+
+          # The tag checkout leaves us in detached HEAD; move to main so the
+          # manifest commit below lands on the branch, not a dangling commit.
+          git fetch origin main
+          git checkout main
+
+          jprm repo add manifest.json "$ZIP" --url="$BASE_URL" --plugin-url="${BASE_URL}/${FILENAME}"
+
+      - name: Commit manifest.json
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Update manifest.json for ${{ github.ref_name }}"
+          file_pattern: manifest.json
+          branch: main
