@@ -4,9 +4,11 @@ A standalone Jellyfin server plugin that shows a custom loading/splash screen wi
 
 No dependency on any other plugin.
 
+See [CHANGELOG.md](CHANGELOG.md) for release history.
+
 ## How it works
 
-On startup the plugin patches the server's `index.html` once (marker-guarded, idempotent, with an on-disk backup as `index.html.jf-loading-original`) to add a single `<script>` tag pointing at `/web/SplashScreen/loader.js`. That script fetches live settings from `/SplashScreen/Config` and renders the overlay, so changing settings in the dashboard takes effect immediately without re-patching anything.
+On startup the plugin patches the server's `index.html` (marker-guarded, idempotent, with an on-disk backup as `index.html.jf-loading-original`, regenerated from that backup on every startup so plugin upgrades take effect) to add a single `<script>` tag pointing at `/SplashScreen/loader.js`. That script fetches live settings from `/SplashScreen/Config` and renders the overlay, so changing settings in the dashboard takes effect immediately without re-patching anything.
 
 ## Build
 

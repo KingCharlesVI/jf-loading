@@ -98,64 +98,64 @@
                 splashScreenUpdateLogoModeVisibility(config.LogoMode);
                 Dashboard.hideLoadingMsg();
             });
-        });
 
-        document.querySelector("#LogoMode").addEventListener("change", function (e) {
-            splashScreenUpdateLogoModeVisibility(e.target.value);
-        });
-
-        document.querySelector("#UploadLogoButton").addEventListener("click", function () {
-            var fileInput = document.querySelector("#LogoFile");
-            if (!fileInput.files || !fileInput.files.length) {
-                return;
-            }
-
-            var formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-
-            Dashboard.showLoadingMsg();
-            fetch(ApiClient.getUrl("SplashScreen/Logo"), {
-                method: "POST",
-                headers: { "Authorization": ApiClient.authorizationHeader ? ApiClient.authorizationHeader() : "" },
-                body: formData
-            })
-                .then(function (response) {
-                    if (!response.ok) {
-                        throw new Error("Upload failed");
-                    }
-                    return response.json();
-                })
-                .then(function (result) {
-                    document.querySelector("#LogoUploadStatus").textContent = "Uploaded: " + result.fileName;
-                    Dashboard.hideLoadingMsg();
-                })
-                .catch(function () {
-                    document.querySelector("#LogoUploadStatus").textContent = "Upload failed.";
-                    Dashboard.hideLoadingMsg();
-                });
-        });
-
-        document.querySelector("#SplashScreenConfigForm").addEventListener("submit", function (e) {
-            e.preventDefault();
-            Dashboard.showLoadingMsg();
-            ApiClient.getPluginConfiguration(SplashScreenConfig.pluginUniqueId).then(function (config) {
-                config.Enabled = document.querySelector("#Enabled").checked;
-                config.LogoMode = document.querySelector("#LogoMode").value;
-                config.LogoUrl = document.querySelector("#LogoUrl").value;
-                config.LoadingMessage = document.querySelector("#LoadingMessage").value;
-                config.BackgroundColor = document.querySelector("#BackgroundColor").value;
-                config.TextColor = document.querySelector("#TextColor").value;
-                config.ProgressBarColor = document.querySelector("#ProgressBarColor").value;
-                config.MinimumDisplayDurationMs = parseInt(document.querySelector("#MinimumDisplayDurationMs").value, 10) || 0;
-
-                ApiClient.updatePluginConfiguration(SplashScreenConfig.pluginUniqueId, config).then(function (result) {
-                    Dashboard.processPluginConfigurationUpdateResult(result);
-                }).catch(function (err) {
-                    Dashboard.hideLoadingMsg();
-                    Dashboard.alert("Failed to save configuration: " + err);
-                });
+            document.querySelector("#LogoMode").addEventListener("change", function (e) {
+                splashScreenUpdateLogoModeVisibility(e.target.value);
             });
-            return false;
+
+            document.querySelector("#UploadLogoButton").addEventListener("click", function () {
+                var fileInput = document.querySelector("#LogoFile");
+                if (!fileInput.files || !fileInput.files.length) {
+                    return;
+                }
+
+                var formData = new FormData();
+                formData.append("file", fileInput.files[0]);
+
+                Dashboard.showLoadingMsg();
+                fetch(ApiClient.getUrl("SplashScreen/Logo"), {
+                    method: "POST",
+                    headers: { "Authorization": ApiClient.authorizationHeader ? ApiClient.authorizationHeader() : "" },
+                    body: formData
+                })
+                    .then(function (response) {
+                        if (!response.ok) {
+                            throw new Error("Upload failed");
+                        }
+                        return response.json();
+                    })
+                    .then(function (result) {
+                        document.querySelector("#LogoUploadStatus").textContent = "Uploaded: " + result.fileName;
+                        Dashboard.hideLoadingMsg();
+                    })
+                    .catch(function () {
+                        document.querySelector("#LogoUploadStatus").textContent = "Upload failed.";
+                        Dashboard.hideLoadingMsg();
+                    });
+            });
+
+            document.querySelector("#SplashScreenConfigForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                Dashboard.showLoadingMsg();
+                ApiClient.getPluginConfiguration(SplashScreenConfig.pluginUniqueId).then(function (config) {
+                    config.Enabled = document.querySelector("#Enabled").checked;
+                    config.LogoMode = document.querySelector("#LogoMode").value;
+                    config.LogoUrl = document.querySelector("#LogoUrl").value;
+                    config.LoadingMessage = document.querySelector("#LoadingMessage").value;
+                    config.BackgroundColor = document.querySelector("#BackgroundColor").value;
+                    config.TextColor = document.querySelector("#TextColor").value;
+                    config.ProgressBarColor = document.querySelector("#ProgressBarColor").value;
+                    config.MinimumDisplayDurationMs = parseInt(document.querySelector("#MinimumDisplayDurationMs").value, 10) || 0;
+
+                    ApiClient.updatePluginConfiguration(SplashScreenConfig.pluginUniqueId, config).then(function (result) {
+                        Dashboard.processPluginConfigurationUpdateResult(result);
+                    }).catch(function (err) {
+                        Dashboard.hideLoadingMsg();
+                        Dashboard.alert("Failed to save configuration: " + err);
+                    });
+                });
+                return false;
+            });
         });
     </script>
 </body>
