@@ -41,7 +41,8 @@ public static class SplashInjector
             // marker is already present, so upgrading the plugin's injected snippet takes
             // effect on the next restart instead of leaving a stale patch in place forever.
             var original = File.ReadAllText(backupPath);
-            var snippet = Marker + "\n<script defer src=\"/SplashScreen/loader.js\"></script>\n";
+            var version = typeof(SplashInjector).Assembly.GetName().Version;
+            var snippet = Marker + $"\n<script defer src=\"/SplashScreen/loader.js?v={version}\"></script>\n";
             var patched = Regex.Replace(original, "(</head>)", snippet + "$1", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(1));
 
             if (File.ReadAllText(indexPath) != patched)
