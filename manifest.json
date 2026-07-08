@@ -8,6 +8,14 @@
         "category": "General",
         "versions": [
             {
+                "version": "1.1.0.0",
+                "changelog": "1.0.0.0: Initial release.\n",
+                "targetAbi": "10.11.0.0",
+                "sourceUrl": "https://github.com/KingCharlesVI/jf-loading/releases/download/v1.1.0.0/splash-screen_1.1.0.0.zip",
+                "checksum": "f158c3013e5af2bf7e3136f236f7e799",
+                "timestamp": "2026-07-08T19:46:01Z"
+            },
+            {
                 "version": "1.0.0.7",
                 "changelog": "1.0.0.0: Initial release.\n",
                 "targetAbi": "10.11.0.0",
