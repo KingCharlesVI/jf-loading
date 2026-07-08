@@ -44,7 +44,11 @@ jobs:
           git fetch origin main
           git checkout main
 
-          jprm repo add manifest.json "$ZIP" --url="$BASE_URL" --plugin-url="${BASE_URL}/${FILENAME}"
+          # jprm's REPO_PATH validation computes os.path.dirname(value) and
+          # requires it to exist; a bare filename yields "" which
+          # os.path.exists() always reports False for, so it must be given
+          # with an explicit directory component.
+          jprm repo add ./manifest.json "$ZIP" --url="$BASE_URL" --plugin-url="${BASE_URL}/${FILENAME}"
 
       - name: Commit manifest.json
         uses: stefanzweifel/git-auto-commit-action@v5
