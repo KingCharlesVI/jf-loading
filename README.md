@@ -28,7 +28,7 @@ Output DLL: `Jellyfin.Plugin.SplashScreen/bin/Release/net9.0/Jellyfin.Plugin.Spl
 
 ## Install (manual/local testing)
 
-Copy the built DLL into your Jellyfin server's plugin folder, in its own subfolder named `Splash Screen_1.0.0.0` (matching `build.yaml`'s name/version), then restart the server:
+Copy the built DLL into your Jellyfin server's plugin folder, in its own subfolder named `Splash Screen_<version>` (matching the built assembly version), then restart the server:
 
 ```
 <jellyfin data dir>/plugins/Splash Screen_1.0.0.0/Jellyfin.Plugin.SplashScreen.dll
@@ -38,12 +38,11 @@ Then open Dashboard → Plugins → Splash Screen to configure it.
 
 ## Cutting a release (maintainer)
 
-Releases are built and published automatically by `.github/workflows/release.yml` whenever a matching git tag is pushed:
+Releases are built and published automatically by `.github/workflows/release.yml` whenever a matching git tag is pushed. The tag itself is the source of truth for the version (the workflow strips the leading `v` and passes it to `dotnet publish -p:Version=`), so `build.yaml`'s `version` field does not need to be bumped manually:
 
-1. Bump the `version` field in `build.yaml` (must be four parts, e.g. `1.0.1.0`) and commit it to `main`.
-2. Tag that commit to match, prefixed with `v`, and push the tag:
-   ```
-   git tag v1.0.1.0
-   git push origin v1.0.1.0
-   ```
-3. CI will: build the plugin, create a GitHub Release for the tag with the plugin zip attached, then update and commit `manifest.json` on `main` with the new version entry (checksum + release asset URL), so existing installs pick up the update automatically.
+```
+git tag v1.0.1.0
+git push origin v1.0.1.0
+```
+
+CI will: build the plugin with that version, create a GitHub Release for the tag with the plugin zip attached, then update and commit `manifest.json` on `main` with the new version entry (checksum + release asset URL), so existing installs pick up the update automatically.

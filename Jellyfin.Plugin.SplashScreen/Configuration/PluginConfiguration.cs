@@ -2,18 +2,12 @@ using MediaBrowser.Model.Plugins;
 
 namespace Jellyfin.Plugin.SplashScreen.Configuration;
 
-public enum LogoSourceMode
-{
-    Url,
-    Upload
-}
-
 public class PluginConfiguration : BasePluginConfiguration
 {
     public PluginConfiguration()
     {
         Enabled = true;
-        LogoMode = LogoSourceMode.Url;
+        LogoMode = "Url";
         LogoUrl = string.Empty;
         UploadedLogoFileName = string.Empty;
         BackgroundColor = "#000000";
@@ -25,7 +19,8 @@ public class PluginConfiguration : BasePluginConfiguration
 
     public bool Enabled { get; set; }
 
-    public LogoSourceMode LogoMode { get; set; }
+    /// <summary>"Url" or "Upload".</summary>
+    public string LogoMode { get; set; }
 
     public string LogoUrl { get; set; }
 

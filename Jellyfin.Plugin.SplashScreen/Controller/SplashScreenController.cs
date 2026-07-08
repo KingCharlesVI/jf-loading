@@ -22,7 +22,7 @@ public class SplashScreenController : ControllerBase
     {
         var config = Plugin.Instance!.Configuration;
 
-        string logoUrl = config.LogoMode == LogoSourceMode.Upload && !string.IsNullOrEmpty(config.UploadedLogoFileName)
+        string logoUrl = config.LogoMode == "Upload" && !string.IsNullOrEmpty(config.UploadedLogoFileName)
             ? "/SplashScreen/Logo"
             : config.LogoUrl;
 

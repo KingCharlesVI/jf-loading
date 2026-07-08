@@ -150,6 +150,9 @@
 
                 ApiClient.updatePluginConfiguration(SplashScreenConfig.pluginUniqueId, config).then(function (result) {
                     Dashboard.processPluginConfigurationUpdateResult(result);
+                }).catch(function (err) {
+                    Dashboard.hideLoadingMsg();
+                    Dashboard.alert("Failed to save configuration: " + err);
                 });
             });
             return false;
