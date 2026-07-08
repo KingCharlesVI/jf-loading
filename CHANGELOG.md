@@ -2,8 +2,10 @@
 
 All notable changes to the Splash Screen plugin are documented here, per released version.
 
-## Unreleased
+## 1.2.0.0
 
+- Fixed the installed plugin always showing version `0.0.0.0` in the dashboard (and, as a consequence, the "Uninstall"/"install specific version" actions failing with 404, since they're built from that bogus version string). The `.csproj` had `GenerateAssemblyInfo` disabled, which silently defeats the SDK's translation of the `-p:Version=` MSBuild property (which `jprm`/the release workflow passes from the git tag) into the compiled assembly's actual version metadata — so every release, since the very first one, had shipped a DLL whose real assembly version was `0.0.0.0` regardless of the tag. Removed that setting.
+- Fixed the splash screen not picking up the new appearance after upgrading: the injected `<script src="/SplashScreen/loader.js">` never changes URL between versions and the controller set no cache headers, so browsers could keep serving a stale cached copy indefinitely after a plugin update. Added explicit `no-cache`/`no-store` headers on the `loader.js` response and a `?v=<assembly version>` cache-busting query string on the injected script tag.
 - Removed all configuration. The splash screen is now fixed: black background, a large logo, and a white progress indicator, shown for a minimum of 3 seconds. Removed the settings page, the sidebar entry, plugin configuration storage, and the logo upload/URL/color/message/duration options entirely.
 - The logo is now a fixed embedded resource (`Web/logo.svg`) served at `/SplashScreen/logo.svg`, replacing the previous per-install URL/upload options.
 
