@@ -2,7 +2,7 @@
 
 All notable changes to the Splash Screen plugin are documented here, per released version.
 
-## Unreleased
+## 1.0.0.6
 
 - Fixed settings not saving: `LogoMode` was a C# enum, which `System.Text.Json` cannot deserialize from a plain string without an explicit converter, so every save silently failed server-side. Changed to a plain string field.
 - Fixed the config page fully reloading instead of saving via AJAX: the `change`/`click`/`submit` listeners were attached at top-level script scope, before Jellyfin had necessarily finished mounting the page's inner elements, so a `null` from an early `querySelector` could throw and abort the rest of the script before the submit listener was ever attached. All interactive listeners now attach inside the `pageshow` callback instead, matching the pattern used by other working Jellyfin plugins.
