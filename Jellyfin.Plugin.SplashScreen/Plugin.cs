@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Jellyfin.Plugin.SplashScreen.Configuration;
 using Jellyfin.Plugin.SplashScreen.Injection;
 using MediaBrowser.Common.Configuration;
 using MediaBrowser.Common.Plugins;
@@ -10,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Jellyfin.Plugin.SplashScreen;
 
-public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
+public class Plugin : BasePlugin<BasePluginConfiguration>
 {
     public Plugin(
         IApplicationPaths applicationPaths,
@@ -18,8 +16,6 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         ILogger<Plugin> logger)
         : base(applicationPaths, xmlSerializer)
     {
-        Instance = this;
-
         try
         {
             SplashInjector.Apply(applicationPaths.WebPath, logger);
@@ -30,19 +26,7 @@ public class Plugin : BasePlugin<PluginConfiguration>, IHasWebPages
         }
     }
 
-    public static Plugin? Instance { get; private set; }
-
     public override string Name => "Splash Screen";
 
     public override Guid Id => Guid.Parse("045bee24-5e88-4376-a9e3-0e259eceae73");
-
-    public IEnumerable<PluginPageInfo> GetPages()
-    {
-        yield return new PluginPageInfo
-        {
-            Name = Name,
-            EmbeddedResourcePath = $"{GetType().Namespace}.Configuration.configPage.html",
-            EnableInMainMenu = true
-        };
-    }
 }

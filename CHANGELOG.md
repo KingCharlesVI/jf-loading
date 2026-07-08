@@ -2,6 +2,11 @@
 
 All notable changes to the Splash Screen plugin are documented here, per released version.
 
+## Unreleased
+
+- Removed all configuration. The splash screen is now fixed: black background, a large logo, and a white progress indicator, shown for a minimum of 3 seconds. Removed the settings page, the sidebar entry, plugin configuration storage, and the logo upload/URL/color/message/duration options entirely.
+- The logo is now a fixed embedded resource (`Web/logo.svg`) served at `/SplashScreen/logo.svg`, replacing the previous per-install URL/upload options.
+
 ## 1.0.0.6
 
 - Fixed settings not saving: `LogoMode` was a C# enum, which `System.Text.Json` cannot deserialize from a plain string without an explicit converter, so every save silently failed server-side. Changed to a plain string field.

@@ -1,14 +1,16 @@
 # jf-loading
 
-A standalone Jellyfin server plugin that shows a custom loading/splash screen with a progress bar while the web client boots. Configurable from **Dashboard → Plugins → Splash Screen**: enable/disable, logo (URL or upload), background/text/progress-bar colors, loading message, and minimum display duration.
+A standalone Jellyfin server plugin that shows a loading/splash screen while the web client boots: a black screen with a large logo and a white progress indicator, visible for a minimum of 3 seconds.
 
-No dependency on any other plugin.
+There is no configuration — the appearance is fixed. No dependency on any other plugin.
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## How it works
 
-On startup the plugin patches the server's `index.html` (marker-guarded, idempotent, with an on-disk backup as `index.html.jf-loading-original`, regenerated from that backup on every startup so plugin upgrades take effect) to add a single `<script>` tag pointing at `/SplashScreen/loader.js`. That script fetches live settings from `/SplashScreen/Config` and renders the overlay, so changing settings in the dashboard takes effect immediately without re-patching anything.
+On startup the plugin patches the server's `index.html` (marker-guarded, idempotent, with an on-disk backup as `index.html.jf-loading-original`, regenerated from that backup on every startup so plugin upgrades take effect) to add a single `<script>` tag pointing at `/SplashScreen/loader.js`. That script renders the overlay directly (no server round-trip beyond loading the logo image) and removes itself once the web client is ready and at least 3 seconds have elapsed.
+
+The logo is `Jellyfin.Plugin.SplashScreen/Web/logo.svg`, bundled into the plugin as an embedded resource and served at `/SplashScreen/logo.svg`. Replace that file to change the logo; no other customization points exist.
 
 ## Build
 
@@ -26,7 +28,7 @@ Output DLL: `Jellyfin.Plugin.SplashScreen/bin/Release/net9.0/Jellyfin.Plugin.Spl
    https://raw.githubusercontent.com/KingCharlesVI/jf-loading/main/manifest.json
    ```
 3. Go to Dashboard → Plugins → Catalog, find **Splash Screen**, and install it.
-4. Restart the server, then configure it under Dashboard → Plugins → Splash Screen.
+4. Restart the server. Nothing to configure — the splash screen is active immediately.
 
 ## Install (manual/local testing)
 
@@ -36,7 +38,7 @@ Copy the built DLL into your Jellyfin server's plugin folder, in its own subfold
 <jellyfin data dir>/plugins/Splash Screen_1.0.0.0/Jellyfin.Plugin.SplashScreen.dll
 ```
 
-Then open Dashboard → Plugins → Splash Screen to configure it.
+Nothing to configure — restart and it's active.
 
 ## Cutting a release (maintainer)
 

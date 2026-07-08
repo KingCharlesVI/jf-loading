@@ -19,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Configuration\configPage.html" />
-    <EmbeddedResource Include="Configuration\configPage.html" />
     <None Remove="Web\loader.js" />
     <EmbeddedResource Include="Web\loader.js" />
+    <None Remove="Web\logo.svg" />
+    <EmbeddedResource Include="Web\logo.svg" />
   </ItemGroup>
 
 </Project>
