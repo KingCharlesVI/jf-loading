@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
@@ -21,22 +22,33 @@ public static class SplashInjector
                 return;
             }
 
-            var html = File.ReadAllText(indexPath);
-            if (html.Contains(Marker))
-            {
-                return;
-            }
-
             var backupPath = indexPath + ".jf-loading-original";
             if (!File.Exists(backupPath))
             {
+                var current = File.ReadAllText(indexPath);
+                if (current.Contains(Marker))
+                {
+                    logger.LogWarning(
+                        "index.html at {Path} already contains the splash marker but no backup file exists; skipping to avoid overwriting an unknown state",
+                        indexPath);
+                    return;
+                }
+
                 File.Copy(indexPath, backupPath);
             }
 
-            var snippet = Marker + "\n<script defer src=\"/web/SplashScreen/loader.js\"></script>\n";
-            var patched = Regex.Replace(html, "(</head>)", snippet + "$1", RegexOptions.IgnoreCase, System.TimeSpan.FromSeconds(1));
-            File.WriteAllText(indexPath, patched);
-            logger.LogInformation("Injected splash screen loader into {Path}", indexPath);
+            // Always regenerate from the pristine backup rather than no-op'ing when the
+            // marker is already present, so upgrading the plugin's injected snippet takes
+            // effect on the next restart instead of leaving a stale patch in place forever.
+            var original = File.ReadAllText(backupPath);
+            var snippet = Marker + "\n<script defer src=\"/SplashScreen/loader.js\"></script>\n";
+            var patched = Regex.Replace(original, "(</head>)", snippet + "$1", RegexOptions.IgnoreCase, TimeSpan.FromSeconds(1));
+
+            if (File.ReadAllText(indexPath) != patched)
+            {
+                File.WriteAllText(indexPath, patched);
+                logger.LogInformation("Injected splash screen loader into {Path}", indexPath);
+            }
         }
     }
 
